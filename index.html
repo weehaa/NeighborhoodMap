@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Neighborhood Map</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <div class="in-1">
+            <label for="init-loc">Location: </label>
+            <input id="init-loc" type="text" value="Moscow, Kremlin">
+            <input id="submit" type="submit" value="Places nearby">
+        </div>
+        <div id="map"></div>
+
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyB26IdkqAe5oUzBHz2rD2nvo-e8f1o5-c0&libraries=places&callback=initMap">
+        </script>
+        <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>
+        <script type="text/javascript" src="js/app.js"></script>
+    </body>
+</html>
