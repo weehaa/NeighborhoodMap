@@ -42,24 +42,24 @@ function initMap() {
     zoom: 14
   });
   infowindow = new google.maps.InfoWindow();
-
+  searchPlaces(initLoc);
+}
   // create places service
-  var service = new google.maps.places.PlacesService(map);
 
+function searchPlaces(loc) {
+  var service = new google.maps.places.PlacesService(map);
     service.nearbySearch({
-      location: initLoc,
+      location: loc,
       radius: 500,
     //   type: ['store']
-    }, callback);
-    }
-
-// callback function for nearbySearch
-function callback(results, status) {
-  if (status === google.maps.places.PlacesServiceStatus.OK) {
-    for (var i = 0; i < results.length; i++) {
-      createMarker(results[i]);
-    }
-  }
+    }, // callback function for nearbySearch
+    function(results, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+          createMarker(results[i]);
+        }
+      }
+    });
 }
 
 // create marker function
@@ -78,9 +78,9 @@ function createMarker(place) {
 
 
 document.getElementById('submit').addEventListener('click', newInitLoc);
-// This function takes the input value in the find nearby area text input
-// locates it, and then zooms into that area. This is so that the user can
-// show all listings, then decide to focus on one area of the map.
+
+// This function takes the input value in the init loc text input
+// locates it, and then searches for nearby places.
 function newInitLoc() {
   // Initialize the geocoder.
   var geocoder = new google.maps.Geocoder();
@@ -93,12 +93,10 @@ function newInitLoc() {
     // Geocode the address/area entered to get the center. Then, center the map
     // on it and zoom in
     geocoder.geocode(
-      { address: address,
-        // componentRestrictions: {locality: 'New York'}
-      }, function(results, status) {
+      { address: address }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
           map.setCenter(results[0].geometry.location);
-          map.setZoom(15);
+          searchPlaces(results[0].geometry.location);
         } else {
           window.alert('We could not find that location - try entering a more' +
               ' specific place.');
