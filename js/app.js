@@ -8,6 +8,7 @@ var initLoc =  {
                "lat" : 55.75393030000001,
                "lng" : 37.620795
            };
+var locName = "Moscow, Red Square"
 
 
 function initApp() {
@@ -15,6 +16,7 @@ function initApp() {
 };
 
 var ViewModel = function() {
+    this.initLocName = ko.observable(locName);
     // initialize map function
     var map = new google.maps.Map(document.getElementById('map'), {
         center: initLoc,
@@ -22,7 +24,6 @@ var ViewModel = function() {
       });
     var infowindow = new google.maps.InfoWindow();
     searchPlaces(initLoc);
-
 
 
     function searchPlaces(loc) {
