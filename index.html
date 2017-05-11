@@ -16,7 +16,7 @@
         <div id="map"></div>
 
         <ul data-bind="foreach: markers">
-            <li data-bind="text: name"></li>
+            <li data-bind="text: name, click: itemClick"></li>
         </ul>
 
         <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>
