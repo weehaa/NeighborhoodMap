@@ -4,10 +4,14 @@
 // 4. add places into an observable array
 // 5. list an observable array as selection
 var initLoc = {
+    "geometry" : {
+        "location" : {
                "lat" : 55.75393030000001,
-               "lng" : 37.620795
+               "lng" : 37.620795000000044
+           }
+    },
+    "name" : "Moscow, Red Square"
            };
-var locName = "Moscow, Red Square";
 
 
 function initApp() {
@@ -16,15 +20,18 @@ function initApp() {
 
 var ViewModel = function() {
     var self = this;
-    self.initLocName = ko.observable(locName);
     self.markers = ko.observableArray([]);
-
+    self.initLocName = ko.observable(initLoc.name);
     // initialize map function
     var map = new google.maps.Map(document.getElementById("map"), {
-        center: initLoc,
+        center: initLoc.geometry.location,
         zoom: 15
       });
     var infowindow = new google.maps.InfoWindow();
+
+
+
+
 
 
     // searches for places nearby `loc` location
@@ -70,25 +77,38 @@ var ViewModel = function() {
         });
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
+        return marker;
         }
 
 
     // This function takes the input value in the init loc text input
     // locates it, and then searches for nearby places.
     self.newInitLoc = function () {
-      // Initialize the geocoder.
-      var geocoder = new google.maps.Geocoder();
-      // Get the address or place that the user entered.
-      var address = self.initLocName();
-      // Make sure the address isn't blank.
-      if (address == "") {
+        // clear all markers from the map
+        for (var i = 0; i < self.markers().length; i++) {
+          self.markers()[i].setMap(null);
+        }
+        // clear markers array
+        self.markers([]);
+        // Initialize the geocoder.
+        var geocoder = new google.maps.Geocoder();
+        // Get the address or place that the user entered.
+        var address = self.initLocName();
+        // Make sure the address isn't blank.
+        if (address == "") {
         window.alert("You must enter an area, or address.");
-      } else {
+        } else {
         // Geocode the address/area entered to get the center.
         // Then, center the map on it and zoom in
         geocoder.geocode(
           { address: address }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
+                // create initial location marker
+                var marker = createMarker(results[0]);
+                infowindow.setContent(address);
+                infowindow.open(map, marker);
+                marker.setAnimation(google.maps.Animation.DROP);
+
               map.setCenter(results[0].geometry.location);
               searchPlaces(results[0].geometry.location);
             } else {
@@ -96,6 +116,7 @@ var ViewModel = function() {
                             ".\nTry entering a more specific place.");
             }
           });
-      }
+        }
     }
+
 }
