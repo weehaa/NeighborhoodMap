@@ -3,6 +3,7 @@
 // 3. add markers to the map for nearby places
 // 4. add places into an observable array
 // 5. list an observable array as selection
+var markers = [];
 var places = [];
 var initLoc =  {
                "lat" : 55.75393030000001,
@@ -10,23 +11,30 @@ var initLoc =  {
            };
 var locName = "Moscow, Red Square"
 
+var Place = function (placeData) {
+
+}
 
 function initApp() {
     ko.applyBindings(new ViewModel());
 };
 
 var ViewModel = function() {
-    this.initLocName = ko.observable(locName);
+    var self = this;
+    self.initLocName = ko.observable(locName);
+    self.markers = ko.observableArray([]);
+
     // initialize map function
     var map = new google.maps.Map(document.getElementById('map'), {
         center: initLoc,
         zoom: 15
       });
     var infowindow = new google.maps.InfoWindow();
-    searchPlaces(initLoc);
 
 
+    // searches for places nearby `loc` location
     function searchPlaces(loc) {
+        console.log('searchPlaces');
       // create places service
       var service = new google.maps.places.PlacesService(map);
         service.nearbySearch({
@@ -39,6 +47,8 @@ var ViewModel = function() {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
               createMarker(results[i]);
+            //   self.places.push(results[i]);
+            //   console.log(results[i]);
             }
           }
         });
@@ -49,25 +59,28 @@ var ViewModel = function() {
       var placeLoc = place.geometry.location;
       var marker = new google.maps.Marker({
         map: map,
-        position: place.geometry.location
+        position: place.geometry.location,
+        name: place.name
       });
 
       google.maps.event.addListener(marker, 'click', function() {
         infowindow.setContent(place.name);
         infowindow.open(map, this);
       });
+      self.markers.push(marker);
+      console.log(marker.name);
     }
 
 
-    document.getElementById('submit').addEventListener('click', newInitLoc);
-
     // This function takes the input value in the init loc text input
     // locates it, and then searches for nearby places.
-    function newInitLoc() {
+    self.newInitLoc = function () {
+        console.log('newInitLoc');
       // Initialize the geocoder.
       var geocoder = new google.maps.Geocoder();
       // Get the address or place that the user entered.
-      var address = document.getElementById('init-loc').value;
+      var address = self.initLocName();
+    //   console.log(address);
       // Make sure the address isn't blank.
       if (address == '') {
         window.alert('You must enter an area, or address.');
