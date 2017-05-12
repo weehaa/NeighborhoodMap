@@ -70,6 +70,7 @@ var ViewModel = function() {
             position: place.geometry.location,
             name: place.name,
             itemClick: markerClick,
+            isHidden: false
         });
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
@@ -121,22 +122,39 @@ var ViewModel = function() {
         // initial marker index = 0 is allways visible
         for (var i = 1; i < self.markers().length; i++) {
             var marker = self.markers()[i];
-            var item = document.getElementById("place_" + i);
             if(marker.name.toLowerCase().indexOf(value.toLowerCase()) == -1) {
                 /**if the place is NOT relevant to the search, make the marker
                 invisible and hide the marker from the markers list**/
                 // check if marker is already hidden
                 marker.map !== null ? marker.setMap(null) : '';
-                if (typeof item !== 'undefined' && !item.classList.contains("hidden")) {
-                    item.classList.add("hidden");
-                }
+                marker.isHidden ? '' : marker.isHidden = true;
             } else {
                 marker.map === null ? marker.setMap(map) : '';
-                if (typeof item !== 'undefined' && item.classList.contains("hidden")) {
-                    item.classList.remove("hidden");
-                }
+                marker.isHidden ? marker.isHidden = false : '';
             }
+            // refresh mutated item in markers array
+            self.markers.splice(i, 1);
+            self.markers.splice(i, 0, marker);
         }
     });
+
+
+        // hide all list items
+     self.hideItems = function() {
+        for (var i = 0; i < self.markers().length; i++) {
+            self.markers()[i].isHidden = true;
+
+            // console.log(self.markers()[i].$index);
+        }
+        self.markers.unshift(self.markers[0]);
+        // ko.cleanNode(document.getElementById("itemList"))
+        // ko.applyBindings(ViewModel, document.getElementById("itemList"))
+        // console.log(self.markers().length);
+        self.markers.valueHasMutated();
+        // marker = self.markers()[0];
+        // console.log("HIDE");
+        // self.markers.push(marker);
+    }
+
 
 }

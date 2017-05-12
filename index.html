@@ -17,7 +17,7 @@
         <div id="map"></div>
 
         <ul id="itemList" data-bind="foreach: markers">
-            <li id='place' data-bind="attr: {id: 'place_' + $index()}, text: name, click: itemClick"></li>
+            <li data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
         </ul>
         <button type="button" name="hide" data-bind="click: function(){hideItems()}">HIDE</button>
 
