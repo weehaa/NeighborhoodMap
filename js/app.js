@@ -119,23 +119,33 @@ var ViewModel = function() {
 
     self.query = ko.observable('');
     self.query.subscribe(function(value) {
+        var markersMutated = false;
         // initial marker index = 0 is allways visible
         for (var i = 1; i < self.markers().length; i++) {
             var marker = self.markers()[i];
+
             if(marker.name.toLowerCase().indexOf(value.toLowerCase()) == -1) {
                 /**if the place is NOT relevant to the search, make the marker
                 invisible and hide the marker from the markers list**/
                 // check if marker is already hidden
-                marker.map !== null ? marker.setMap(null) : '';
-                marker.isHidden ? '' : marker.isHidden = true;
+                if (!marker.isHidden) {
+                    marker.isHidden = true;
+                    marker.setMap(null);
+                    markersMutated = true;
+                };
             } else {
-                marker.map === null ? marker.setMap(map) : '';
-                marker.isHidden ? marker.isHidden = false : '';
+                if (marker.isHidden) {
+                    marker.isHidden = false;
+                    marker.setMap(map);
+                    markersMutated = true;
+                };
             }
-            // refresh mutated item in markers array
-            self.markers.splice(i, 1);
-            self.markers.splice(i, 0, marker);
         }
+        console.log(markersMutated);
+        // force reload markers observableArray if one of the markers has mutated
+            var data = self.markers();
+            self.markers(null);
+            self.markers(data);
     });
 
 
