@@ -12,12 +12,14 @@
             <label for="init-loc">Location: </label>
             <input type="text" data-bind="textInput: initLocName">
             <input type="submit" value="Places nearby" data-bind="click: newInitLoc()">
+            <input placeholder="Search…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
         </div>
         <div id="map"></div>
 
-        <ul data-bind="foreach: markers">
-            <li data-bind="text: name, click: itemClick"></li>
+        <ul id="itemList" data-bind="foreach: markers">
+            <li id='place' data-bind="attr: {id: 'place_' + $index()}, text: name, click: itemClick"></li>
         </ul>
+        <button type="button" name="hide" data-bind="click: function(){hideItems()}">HIDE</button>
 
         <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>
         <script type="text/javascript" src="js/app.js"></script>

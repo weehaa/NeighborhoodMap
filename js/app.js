@@ -30,10 +30,6 @@ var ViewModel = function() {
     var infowindow = new google.maps.InfoWindow();
 
 
-
-
-
-
     // searches for places nearby `loc` location
     function searchPlaces(loc) {
       // create places service
@@ -73,7 +69,7 @@ var ViewModel = function() {
             map: map,
             position: place.geometry.location,
             name: place.name,
-            itemClick: markerClick
+            itemClick: markerClick,
         });
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
@@ -104,8 +100,9 @@ var ViewModel = function() {
           { address: address }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 // create initial location marker
+                results[0].name = self.initLocName();
                 var marker = createMarker(results[0]);
-                infowindow.setContent(address);
+                infowindow.setContent(marker.name);
                 infowindow.open(map, marker);
                 marker.setAnimation(google.maps.Animation.DROP);
 
@@ -118,5 +115,28 @@ var ViewModel = function() {
           });
         }
     }
+
+    self.query = ko.observable('');
+    self.query.subscribe(function(value) {
+        // initial marker index = 0 is allways visible
+        for (var i = 1; i < self.markers().length; i++) {
+            var marker = self.markers()[i];
+            var item = document.getElementById("place_" + i);
+            if(marker.name.toLowerCase().indexOf(value.toLowerCase()) == -1) {
+                /**if the place is NOT relevant to the search, make the marker
+                invisible and hide the marker from the markers list**/
+                // check if marker is already hidden
+                marker.map !== null ? marker.setMap(null) : '';
+                if (typeof item !== 'undefined' && !item.classList.contains("hidden")) {
+                    item.classList.add("hidden");
+                }
+            } else {
+                marker.map === null ? marker.setMap(map) : '';
+                if (typeof item !== 'undefined' && item.classList.contains("hidden")) {
+                    item.classList.remove("hidden");
+                }
+            }
+        }
+    });
 
 }
