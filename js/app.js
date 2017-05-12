@@ -1,8 +1,3 @@
-// 1. show map for init location
-// 2. search for places nearby the init location
-// 3. add markers to the map for nearby places
-// 4. add places into an observable array
-// 5. list an observable array as selection
 var initLoc = {
     "geometry" : {
         "location" : {
@@ -13,10 +8,6 @@ var initLoc = {
     "name" : "Moscow, Red Square"
            };
 
-
-function initApp() {
-    ko.applyBindings(new ViewModel());
-}
 
 var ViewModel = function() {
     var self = this;
@@ -120,10 +111,8 @@ var ViewModel = function() {
     self.query = ko.observable('');
     self.query.subscribe(function(value) {
         var markersMutated = false;
-        // initial marker index = 0 is allways visible
-        for (var i = 1; i < self.markers().length; i++) {
+        for (var i = 0; i < self.markers().length; i++) {
             var marker = self.markers()[i];
-
             if(marker.name.toLowerCase().indexOf(value.toLowerCase()) == -1) {
                 /**if the place is NOT relevant to the search, make the marker
                 invisible and hide the marker from the markers list**/
@@ -141,30 +130,15 @@ var ViewModel = function() {
                 };
             }
         }
-        console.log(markersMutated);
         // force reload markers observableArray if one of the markers has mutated
+        if (markersMutated) {
             var data = self.markers();
             self.markers(null);
             self.markers(data);
-    });
-
-
-        // hide all list items
-     self.hideItems = function() {
-        for (var i = 0; i < self.markers().length; i++) {
-            self.markers()[i].isHidden = true;
-
-            // console.log(self.markers()[i].$index);
         }
-        self.markers.unshift(self.markers[0]);
-        // ko.cleanNode(document.getElementById("itemList"))
-        // ko.applyBindings(ViewModel, document.getElementById("itemList"))
-        // console.log(self.markers().length);
-        self.markers.valueHasMutated();
-        // marker = self.markers()[0];
-        // console.log("HIDE");
-        // self.markers.push(marker);
-    }
+    });
+}
 
-
+function initApp() {
+    ko.applyBindings(new ViewModel());
 }
