@@ -139,6 +139,15 @@ var ViewModel = function() {
     });
 }
 
+
+// Googleapis callback function. Initialize the app if `google` variable is defined.
 function initApp() {
-    ko.applyBindings(new ViewModel());
+    if (typeof google !== 'undefined') {
+        ko.applyBindings(new ViewModel());
+    } else { console.log("google is undefined"); };
+}
+
+
+function googleError() {
+    window.alert ("Can't load google maps API");
 }
