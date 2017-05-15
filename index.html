@@ -17,10 +17,11 @@
         <div id="map"></div>
 
         <ul id="itemList" data-bind="foreach: markers">
-            <li data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
+            <li class="hidden" data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
         </ul>
         <button type="button" name="hide" data-bind="click: function(){hideItems()}">HIDE</button>
 
+        <script src="js/libs/jquery.min.js"></script>
         <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>
         <script type="text/javascript" src="js/app.js"></script>
         <script async defer

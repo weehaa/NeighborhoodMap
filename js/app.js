@@ -13,6 +13,7 @@ var ViewModel = function() {
     var self = this;
     self.markers = ko.observableArray([]);
     self.initLocName = ko.observable(initLoc.name);
+    console.log(wikiSearch("Москва"));
     // initialize map function
     var map = new google.maps.Map(document.getElementById("map"), {
         center: initLoc.geometry.location,
@@ -45,7 +46,7 @@ var ViewModel = function() {
     function createMarker(place) {
         var markerClick = function() {
             var thisMarker = this;
-            infowindow.setContent(this.name);
+            infowindow.setContent('<h3>' + this.name + '</h3>' + this.wikiLinks);
             infowindow.open(map, this);
             if (this.getAnimation() == null) {
                 this.setAnimation(google.maps.Animation.BOUNCE);
@@ -61,7 +62,8 @@ var ViewModel = function() {
             position: place.geometry.location,
             name: place.name,
             itemClick: markerClick,
-            isHidden: false
+            isHidden: false,
+            wikiLinks: wikiSearch(place.name)
         });
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
@@ -108,6 +110,8 @@ var ViewModel = function() {
         }
     }
 
+
+    // search query function with  subscribtion to all the events in search input
     self.query = ko.observable('');
     self.query.subscribe(function(value) {
         var markersMutated = false;
@@ -135,8 +139,47 @@ var ViewModel = function() {
             var data = self.markers();
             self.markers(null);
             self.markers(data);
+            data = null;
         }
     });
+}
+
+// load wikipedia data
+function wikiSearch(placeName) {
+    // that = this;
+    // that.infoContent = 'test';
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+                   placeName + '&format=json&callback=wikiCallback';
+    var wikiRequestTimeout = setTimeout(function(){
+        return "<p>failed to get wikipedia resources</p>";
+    }, 8000);
+
+    output = $.ajax({
+        url: wikiUrl,
+        dataType: "jsonp",
+        jsonp: "callback",
+        success: function( response ) {
+            var articleList = response[1];
+            if (articleList.length === 0) {
+                infoContent = "<p>No articles on wikipedia</p>";
+            }
+            infoContent = "<p> Wikipedia links:</p><ul>"
+            // set max  of 3 articles to return
+            for (var i = 0; i < (articleList.length < 3 ? articleList.length : 3); i++) {
+                articleStr = articleList[i];
+                var url = 'http://en.wikipedia.org/wiki/' + encodeURIComponent(articleStr);
+                infoContent += '<li><a href="' + url + '">' + articleStr + '</a></li>';
+            };
+            infoContent += '<ul>';
+            clearTimeout(wikiRequestTimeout);
+            return infoContent
+        }
+    }).fail(function() {
+        // console.log("wiki search failed");
+        return "<p>wiki search failed</p>";
+    });
+    // console.log(that.infoContent);
+    return output;
 }
 
 
@@ -144,7 +187,7 @@ var ViewModel = function() {
 function initApp() {
     if (typeof google !== 'undefined') {
         ko.applyBindings(new ViewModel());
-    } else { console.log("google is undefined"); };
+    } else { googleError() };
 }
 
 
