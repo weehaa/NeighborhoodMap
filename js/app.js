@@ -10,25 +10,22 @@ var initLoc = {
 
 var wiki = {
     "notFound" : "<p>No wikipedia articles found</p>",
-    "load" : "<p>loading wiki...</p>",
-    "fail" : "<p>Wikipedia search failed</p>"
+    "load" : "<p>Loading data from Wikipedia...</p>",
+    "fail" : "<p>Wikipedia search failed, try again</p>"
 }
 
 var ViewModel = function() {
     var self = this;
     self.markers = ko.observableArray([]);
-    self.wikiContent = ko.observable('init content');
     self.initLocName = ko.observable(initLoc.name);
-    // console.log(wikiSearch("Москва"));
     // initialize map function
     var map = new google.maps.Map(document.getElementById("map"), {
         center: initLoc.geometry.location,
         zoom: 15
       });
-    // var infowindow = new google.maps.InfoWindow();
 
 
-    // searches for places nearby `loc` location
+    // search for places nearby `loc` location
     function searchPlaces(loc) {
       // create places service
       var service = new google.maps.places.PlacesService(map);
@@ -52,12 +49,10 @@ var ViewModel = function() {
     function createMarker(place) {
         var markerClick = function() {
             var thisMarker = this;
-            if (this.wikiLinks() === wiki.load) {
+            if (this.wikiLinks() === wiki.load||this.wikiLinks() === wiki.fail) {
+                this.wikiLinks(wiki.load);
                 wikiSearch(this);
-
             }
-            console.log("wiki: " + this.wikiLinks());
-            // infowindow.setContent('<h3>' + this.name + '</h3>' + this.wikiLinks());
             infoWindowInit(this);
             self.infoWindow.open(map, this);
             if (this.getAnimation() == null) {
@@ -83,17 +78,16 @@ var ViewModel = function() {
         }
 
     // Sets up lone info window
-    // code is taken from http://jsfiddle.net/SittingFox/nr8tr5oo/
+    // some of this code is taken from http://jsfiddle.net/SittingFox/nr8tr5oo/
     function infoWindowInit(marker) {
-        // close infoWindow if it already exists
+        // close infoWindow if it already open
         if (typeof self.infoWindow !== 'undefined' ) {
             self.infoWindow.close();
         }
-        self.wikiContent(marker.wikiLinks());
         var infoWindowHTML =
-            '<h3>' + marker.name + '</h3>' +
-            '<div id="info-window"' +
-            'data-bind="template: { name: \'info-window-template\', data: wikiContent }">' +
+            '<div id="info-window">' +
+                '<h3 data-bind="text: name"></h3>' +
+                '<div id="wiki-content" data-bind="html: wikiLinks"></div>' +
             '</div>';
 
         self.infoWindow = new google.maps.InfoWindow({
@@ -107,7 +101,8 @@ var ViewModel = function() {
          */
         google.maps.event.addListener(self.infoWindow, 'domready', function () {
             if (!isInfoWindowLoaded) {
-                ko.applyBindings(self, $("#info-window")[0]);
+                // binding marker data to info window!
+                ko.applyBindings(marker, $("#info-window")[0]);
                 isInfoWindowLoaded = true;
             }
         });
@@ -115,12 +110,12 @@ var ViewModel = function() {
 
 
     // load wikipedia data
-    function wikiSearch(place) {
+    function wikiSearch(marker) {
         var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-                       encodeURIComponent(place.name) + '&format=json&callback=wikiCallback';
-                       console.log(wikiUrl);
+                       encodeURIComponent(marker.name) + '&format=json&callback=wikiCallback';
+        console.log(wikiUrl);
         var wikiRequestTimeout = setTimeout(function(){
-            return "<p>failed to get wikipedia resources</p>";
+            marker.wikiLinks(wiki.fail);
         }, 8000);
 
         $.ajax({
@@ -128,25 +123,25 @@ var ViewModel = function() {
             dataType: "jsonp",
             jsonp: "callback",
             success: function(response) {
+                clearTimeout(wikiRequestTimeout);
                 var articleList = response[1];
                 var articleLinks = response[3];
                 if (articleList.length === 0) {
-                    self.wikiContent(wiki.notFound);
+                    marker.wikiLinks(wiki.notFound);
                     return;
                 }
-                self.wikiContent("<p>Wikipedia links:</p><ul>");
+                marker.wikiLinks("<p>Wikipedia links:</p><ul>");
                 // set max  of 3 articles to return
                 for (var i = 0; i < (articleList.length < 3 ? articleList.length : 3); i++) {
                     articleStr = articleList[i];
                     var url = 'http://en.wikipedia.org/wiki/' + encodeURIComponent(articleStr);
-                    self.wikiContent(self.wikiContent() + '<li><a href="' + url + '">' + articleStr + '</a></li>');
+                    marker.wikiLinks(marker.wikiLinks() + '<li><a href="' + url + '">' + articleStr + '</a></li>');
                 };
-                clearTimeout(wikiRequestTimeout);
-                console.log('output: ' + self.wikiContent());
+                marker.wikiLinks(marker.wikiLinks() + '</ul>');
+
             }
         }).fail(function() {
-            // console.log("wiki search failed");
-            self.wikiContent(wiki.fail);
+            marker.wikiLinks(wiki.fail);
         });
 
     }
