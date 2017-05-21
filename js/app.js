@@ -6,20 +6,26 @@ var initLoc = {
            }
     },
     "name" : "Moscow, Red Square"
-           };
+}
 
+var wiki = {
+    "notFound" : "<p>No wikipedia articles found</p>",
+    "load" : "<p>loading wiki...</p>",
+    "fail" : "<p>Wikipedia search failed</p>"
+}
 
 var ViewModel = function() {
     var self = this;
     self.markers = ko.observableArray([]);
+    self.wikiContent = ko.observable('init content');
     self.initLocName = ko.observable(initLoc.name);
-    console.log(wikiSearch("Москва"));
+    // console.log(wikiSearch("Москва"));
     // initialize map function
     var map = new google.maps.Map(document.getElementById("map"), {
         center: initLoc.geometry.location,
         zoom: 15
       });
-    var infowindow = new google.maps.InfoWindow();
+    // var infowindow = new google.maps.InfoWindow();
 
 
     // searches for places nearby `loc` location
@@ -46,8 +52,14 @@ var ViewModel = function() {
     function createMarker(place) {
         var markerClick = function() {
             var thisMarker = this;
-            infowindow.setContent('<h3>' + this.name + '</h3>' + this.wikiLinks);
-            infowindow.open(map, this);
+            if (this.wikiLinks() === wiki.load) {
+                wikiSearch(this);
+
+            }
+            console.log("wiki: " + this.wikiLinks());
+            // infowindow.setContent('<h3>' + this.name + '</h3>' + this.wikiLinks());
+            infoWindowInit(this);
+            self.infoWindow.open(map, this);
             if (this.getAnimation() == null) {
                 this.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(function() {
@@ -63,12 +75,81 @@ var ViewModel = function() {
             name: place.name,
             itemClick: markerClick,
             isHidden: false,
-            wikiLinks: wikiSearch(place.name)
+            wikiLinks: ko.observable(wiki.load)
         });
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
         return marker;
         }
+
+    // Sets up lone info window
+    // code is taken from http://jsfiddle.net/SittingFox/nr8tr5oo/
+    function infoWindowInit(marker) {
+        // close infoWindow if it already exists
+        if (typeof self.infoWindow !== 'undefined' ) {
+            self.infoWindow.close();
+        }
+        self.wikiContent(marker.wikiLinks());
+        var infoWindowHTML =
+            '<h3>' + marker.name + '</h3>' +
+            '<div id="info-window"' +
+            'data-bind="template: { name: \'info-window-template\', data: wikiContent }">' +
+            '</div>';
+
+        self.infoWindow = new google.maps.InfoWindow({
+            content: infoWindowHTML
+        });
+        var isInfoWindowLoaded = false;
+
+        /*
+         * When the info window opens, bind it to Knockout.
+         * Only do this once.
+         */
+        google.maps.event.addListener(self.infoWindow, 'domready', function () {
+            if (!isInfoWindowLoaded) {
+                ko.applyBindings(self, $("#info-window")[0]);
+                isInfoWindowLoaded = true;
+            }
+        });
+    }
+
+
+    // load wikipedia data
+    function wikiSearch(place) {
+        var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+                       encodeURIComponent(place.name) + '&format=json&callback=wikiCallback';
+                       console.log(wikiUrl);
+        var wikiRequestTimeout = setTimeout(function(){
+            return "<p>failed to get wikipedia resources</p>";
+        }, 8000);
+
+        $.ajax({
+            url: wikiUrl,
+            dataType: "jsonp",
+            jsonp: "callback",
+            success: function(response) {
+                var articleList = response[1];
+                var articleLinks = response[3];
+                if (articleList.length === 0) {
+                    self.wikiContent(wiki.notFound);
+                    return;
+                }
+                self.wikiContent("<p>Wikipedia links:</p><ul>");
+                // set max  of 3 articles to return
+                for (var i = 0; i < (articleList.length < 3 ? articleList.length : 3); i++) {
+                    articleStr = articleList[i];
+                    var url = 'http://en.wikipedia.org/wiki/' + encodeURIComponent(articleStr);
+                    self.wikiContent(self.wikiContent() + '<li><a href="' + url + '">' + articleStr + '</a></li>');
+                };
+                clearTimeout(wikiRequestTimeout);
+                console.log('output: ' + self.wikiContent());
+            }
+        }).fail(function() {
+            // console.log("wiki search failed");
+            self.wikiContent(wiki.fail);
+        });
+
+    }
 
 
     // This function takes the input value in the init loc text input
@@ -96,9 +177,9 @@ var ViewModel = function() {
                 // create initial location marker
                 results[0].name = self.initLocName();
                 var marker = createMarker(results[0]);
-                infowindow.setContent(marker.name);
-                infowindow.open(map, marker);
-                marker.setAnimation(google.maps.Animation.DROP);
+                // infowindow.setContent(marker.name);
+                // infowindow.open(map, marker);
+                // marker.setAnimation(google.maps.Animation.DROP);
 
               map.setCenter(results[0].geometry.location);
               searchPlaces(results[0].geometry.location);
@@ -144,43 +225,6 @@ var ViewModel = function() {
     });
 }
 
-// load wikipedia data
-function wikiSearch(placeName) {
-    // that = this;
-    // that.infoContent = 'test';
-    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-                   placeName + '&format=json&callback=wikiCallback';
-    var wikiRequestTimeout = setTimeout(function(){
-        return "<p>failed to get wikipedia resources</p>";
-    }, 8000);
-
-    output = $.ajax({
-        url: wikiUrl,
-        dataType: "jsonp",
-        jsonp: "callback",
-        success: function( response ) {
-            var articleList = response[1];
-            if (articleList.length === 0) {
-                infoContent = "<p>No articles on wikipedia</p>";
-            }
-            infoContent = "<p> Wikipedia links:</p><ul>"
-            // set max  of 3 articles to return
-            for (var i = 0; i < (articleList.length < 3 ? articleList.length : 3); i++) {
-                articleStr = articleList[i];
-                var url = 'http://en.wikipedia.org/wiki/' + encodeURIComponent(articleStr);
-                infoContent += '<li><a href="' + url + '">' + articleStr + '</a></li>';
-            };
-            infoContent += '<ul>';
-            clearTimeout(wikiRequestTimeout);
-            return infoContent
-        }
-    }).fail(function() {
-        // console.log("wiki search failed");
-        return "<p>wiki search failed</p>";
-    });
-    // console.log(that.infoContent);
-    return output;
-}
 
 
 // Googleapis callback function. Initialize the app if `google` variable is defined.
