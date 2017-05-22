@@ -11,7 +11,9 @@ var initLoc = {
 var wiki = {
     "notFound" : "<p>No wikipedia articles found</p>",
     "load" : "<p>Loading data from Wikipedia...</p>",
-    "fail" : "<p>Wikipedia search failed, try again</p>"
+    "fail" : "<p>Wikipedia search failed, try again</p>",
+    // limit  is a number of results from wiki API
+    "limit" : 2
 }
 
 var ViewModel = function() {
@@ -112,7 +114,8 @@ var ViewModel = function() {
     // load wikipedia data
     function wikiSearch(marker) {
         var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-                       encodeURIComponent(marker.name) + '&format=json&callback=wikiCallback';
+                       encodeURIComponent(marker.name) + '&limit=' + wiki.limit +
+                       '&format=json&callback=wikiCallback';
         console.log(wikiUrl);
         var wikiRequestTimeout = setTimeout(function(){
             marker.wikiLinks(wiki.fail);
@@ -131,8 +134,7 @@ var ViewModel = function() {
                     return;
                 }
                 marker.wikiLinks("<p>Wikipedia links:</p><ul>");
-                // set max  of 3 articles to return
-                for (var i = 0; i < (articleList.length < 3 ? articleList.length : 3); i++) {
+                for (var i = 0; i<articleList.length; i++) {
                     articleStr = articleList[i];
                     var url = 'http://en.wikipedia.org/wiki/' + encodeURIComponent(articleStr);
                     marker.wikiLinks(marker.wikiLinks() + '<li><a href="' + url + '">' + articleStr + '</a></li>');
