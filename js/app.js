@@ -9,12 +9,14 @@ var initLoc = {
 }
 
 var wiki = {
+    "url" : "http://en.wikipedia.org/w/api.php?action=opensearch&format=json&callback=wikiCallback&search=",
     "notFound" : "<p>No wikipedia articles found</p>",
     "load" : "<p>Loading data from Wikipedia...</p>",
     "fail" : "<p>Wikipedia search failed, try again</p>",
-    // limit  is a number of results from wiki API
+    // limit  is a request number of results from wiki API
     "limit" : 2
 }
+
 
 var ViewModel = function() {
     var self = this;
@@ -23,7 +25,10 @@ var ViewModel = function() {
     // initialize map function
     var map = new google.maps.Map(document.getElementById("map"), {
         center: initLoc.geometry.location,
-        zoom: 15
+        zoom: 15,
+        mapTypeControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_TOP,
+        }
       });
 
 
@@ -51,7 +56,7 @@ var ViewModel = function() {
     function createMarker(place) {
         var markerClick = function() {
             var thisMarker = this;
-            if (this.wikiLinks() === wiki.load||this.wikiLinks() === wiki.fail) {
+            if (this.wikiLinks() === ''||this.wikiLinks() === wiki.fail) {
                 this.wikiLinks(wiki.load);
                 wikiSearch(this);
             }
@@ -68,16 +73,18 @@ var ViewModel = function() {
             }
         var marker = new google.maps.Marker({
             map: map,
+            icon: 'images/pointer.png',
             position: place.geometry.location,
             name: place.name,
             itemClick: markerClick,
             isHidden: false,
-            wikiLinks: ko.observable(wiki.load)
+            wikiLinks: ko.observable('')
         });
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
         return marker;
         }
+
 
     // Sets up lone info window
     // some of this code is taken from http://jsfiddle.net/SittingFox/nr8tr5oo/
@@ -97,10 +104,6 @@ var ViewModel = function() {
         });
         var isInfoWindowLoaded = false;
 
-        /*
-         * When the info window opens, bind it to Knockout.
-         * Only do this once.
-         */
         google.maps.event.addListener(self.infoWindow, 'domready', function () {
             if (!isInfoWindowLoaded) {
                 // binding marker data to info window!
@@ -111,11 +114,9 @@ var ViewModel = function() {
     }
 
 
-    // load wikipedia data
+    // load wikipedia data to the marker wikiLinks
     function wikiSearch(marker) {
-        var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-                       encodeURIComponent(marker.name) + '&limit=' + wiki.limit +
-                       '&format=json&callback=wikiCallback';
+        var wikiUrl = wiki.url + encodeURIComponent(marker.name) + '&limit=' + wiki.limit;
         console.log(wikiUrl);
         var wikiRequestTimeout = setTimeout(function(){
             marker.wikiLinks(wiki.fail);
@@ -135,17 +136,15 @@ var ViewModel = function() {
                 }
                 marker.wikiLinks("<p>Wikipedia links:</p><ul>");
                 for (var i = 0; i<articleList.length; i++) {
-                    articleStr = articleList[i];
-                    var url = 'http://en.wikipedia.org/wiki/' + encodeURIComponent(articleStr);
-                    marker.wikiLinks(marker.wikiLinks() + '<li><a href="' + url + '">' + articleStr + '</a></li>');
+                    marker.wikiLinks(marker.wikiLinks() + '<li><a href="' +
+                                     articleLinks[i] + '">' +
+                                     articleList[i] + '</a></li>');
                 };
                 marker.wikiLinks(marker.wikiLinks() + '</ul>');
-
             }
         }).fail(function() {
             marker.wikiLinks(wiki.fail);
         });
-
     }
 
 
@@ -176,7 +175,10 @@ var ViewModel = function() {
                 var marker = createMarker(results[0]);
                 // infowindow.setContent(marker.name);
                 // infowindow.open(map, marker);
-                // marker.setAnimation(google.maps.Animation.DROP);
+                marker.setAnimation(google.maps.Animation.DROP);
+                marker.icon = "images/pointer-icon.png";
+                // marker.icon = 'https://maps.google.com/mapfiles/kml/shapes/parking_lot_maps.png';
+
 
               map.setCenter(results[0].geometry.location);
               searchPlaces(results[0].geometry.location);

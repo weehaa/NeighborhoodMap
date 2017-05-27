@@ -8,8 +8,7 @@
     </head>
     <body>
         <div class="in-1">
-
-            <label for="init-loc">Location: </label>
+            <label class="menu-label" for="init-loc">Location: </label>
             <input type="text" data-bind="textInput: initLocName">
             <input type="submit" value="Places nearby" data-bind="click: newInitLoc()">
             <input placeholder="Search…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
@@ -19,7 +18,6 @@
         <ul id="itemList" data-bind="foreach: markers">
             <li class="hidden" data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
         </ul>
-        <button type="button" name="hide" data-bind="click: function(){hideItems()}">HIDE</button>
 
         <script src="js/libs/jquery.min.js"></script>
         <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>
