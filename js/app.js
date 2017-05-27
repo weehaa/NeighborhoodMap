@@ -27,7 +27,7 @@ var ViewModel = function() {
         center: initLoc.geometry.location,
         zoom: 15,
         mapTypeControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_TOP,
+            position: google.maps.ControlPosition.LEFT_BOTTOM
         }
       });
 

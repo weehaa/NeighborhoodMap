@@ -8,8 +8,8 @@
     </head>
     <body>
         <div class="in-1">
-            <label class="menu-label" for="init-loc">Location: </label>
-            <input type="text" data-bind="textInput: initLocName">
+            <label class="menu-label" for="init-loc"></label>
+            <input class="input" type="text" data-bind="textInput: initLocName">
             <input type="submit" value="Places nearby" data-bind="click: newInitLoc()">
             <input placeholder="Search…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
         </div>
