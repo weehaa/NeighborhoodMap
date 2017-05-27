@@ -15,12 +15,33 @@ html, body {
 }
 
  .in-1 {
-     position: absolute;
-     z-index: 99;
+    width: 320px;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    position: absolute;
+    z-index: 99;
  }
 
  .input {
-     height: 48px;
+    padding: 0 5px;
+    height: 48px;
+    border: none;
+    border-radius: 2px;
+    opacity: 0.95;
+ }
+
+ .text-search {
+    padding-left: 55px;
+    background: url(../images/pointer-icon.png), #FFF;
+    background-repeat: no-repeat;
+ }
+
+ input.input::before {
+     content: "jkljklj";
+     display: block;
+     position: absolute;
+     background: url(../images/pointer.png), 5px 2px, no-repeat;
  }
 
  .menu-label {

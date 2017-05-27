@@ -31,6 +31,9 @@ var ViewModel = function() {
         }
       });
 
+      var searchAutoComplete = new google.maps.places.Autocomplete(
+                            document.getElementById("place-search"));
+
 
     // search for places nearby `loc` location
     function searchPlaces(loc) {
