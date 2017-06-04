@@ -9,9 +9,10 @@ var initLoc = {
 }
 
 var wiki = {
-    "url" : "http://en.wikipedia.org/w/api.php?action=opensearch&format=json&callback=wikiCallback&search=",
+    "url" : "http://en.wikipedia.org/w/api.php?action=opensearch&" +
+            "format=json&callback=wikiCallback&search=",
     "notFound" : "<p>No wikipedia articles found</p>",
-    "load" : "<p>Loading data from Wikipedia...</p>",
+    "load" : '<p>Loading data <i class="fa fa-spinner fa-pulse"></i></p>',
     "fail" : "<p>Wikipedia search failed, try again</p>",
     // limit  is a request number of results from wiki API
     "limit" : 2
@@ -26,13 +27,22 @@ var ViewModel = function() {
     var map = new google.maps.Map(document.getElementById("map"), {
         center: initLoc.geometry.location,
         zoom: 15,
+        fullscreenControl: false,
         mapTypeControlOptions: {
             position: google.maps.ControlPosition.LEFT_BOTTOM
         }
       });
 
-      var searchAutoComplete = new google.maps.places.Autocomplete(
-                            document.getElementById("place-search"));
+    var searchAutoComplete = new google.maps.places.Autocomplete(
+                        document.getElementById("place-search"));
+    var userMenuDiv = document.getElementById("user-menu");
+    map.controls[google.maps.ControlPosition.LEFT_TOP].push(userMenuDiv);
+
+    var tog = document.getElementById("tog");
+    tog.addEventListener('click', function() {
+        $(".list-filter").toggle("slow");
+        $("#tog").toggleClass("rotate-right");
+    });
 
 
     // search for places nearby `loc` location
@@ -137,9 +147,9 @@ var ViewModel = function() {
                     marker.wikiLinks(wiki.notFound);
                     return;
                 }
-                marker.wikiLinks("<p>Wikipedia links:</p><ul>");
+                marker.wikiLinks('<p>Wikipedia links:</p><ul class="wiki-list">');
                 for (var i = 0; i<articleList.length; i++) {
-                    marker.wikiLinks(marker.wikiLinks() + '<li><a href="' +
+                    marker.wikiLinks(marker.wikiLinks() + '<li class="wiki-item"><a class="wiki-link" href="' +
                                      articleLinks[i] + '">' +
                                      articleList[i] + '</a></li>');
                 };

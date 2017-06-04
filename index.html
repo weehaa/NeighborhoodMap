@@ -2,22 +2,29 @@
 <html>
     <head>
         <title>Neighborhood Map</title>
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="initial-scale=1.0">
         <meta charset="utf-8">
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
-        <div class="in-1">
-            <!-- <label class="menu-label" for="init-loc"></label> -->
-            <input id="place-search" class="input text-search" type="text" data-bind="textInput: initLocName">
-            <input class="input button" type="submit" value="Places nearby" data-bind="click: newInitLoc()">
-            <input placeholder="Search…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
-        </div>
-        <div id="map"></div>
 
-        <ul id="itemList" data-bind="foreach: markers">
-            <li class="hidden" data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
-        </ul>
+        <div id="user-menu" class="in-1">
+            <div class="search-div">
+                <i id="tog" class="fa fa-2x fa-bars menu-icon" aria-hidden="true"></i><!--
+            --><input id="place-search" class="f-input text-search" type="text" data-bind="textInput: initLocName"><!--
+            --><i class="fa fa-2x fa-search" aria-hidden="true" data-bind="click: newInitLoc()"></i>
+            </div>
+        </div>
+        <div class="list-filter">
+            <i class="fa fa-2x fa-filter filter-icon" aria-hidden="true"></i>
+            <input  class="f-input filter" placeholder="Filter…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
+            <ul id="itemList" class="items-list" data-bind="foreach: markers">
+                <li class="f-input list-item hidden" data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
+            </ul>
+        </div>
+
+        <div id="map"></div>
 
         <script src="js/libs/jquery.min.js"></script>
         <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>

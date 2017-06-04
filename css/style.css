@@ -6,45 +6,126 @@ html, body {
 }
 
 #map {
-  height: 400px;
+  height: 100%;
   width: 100%;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
- .in-1 {
-    width: 320px;
+.in-1 {
     max-width: 100%;
     box-sizing: border-box;
     padding: 10px;
-    position: absolute;
-    z-index: 99;
  }
 
- .input {
+.search-div {
+     position: relative;
+}
+
+.fa-search {
+     cursor: pointer;
+     padding: 13px;
+     background: #fff;
+     opacity: 0.95;
+}
+
+.f-input {
     padding: 0 5px;
     height: 48px;
+    vertical-align: bottom;
     border: none;
     border-radius: 2px;
+    border-bottom: 1px solid #ccc;
+    background: #fff;
     opacity: 0.95;
  }
 
- .text-search {
-    padding-left: 55px;
-    background: url(../images/pointer-icon.png), #FFF;
+.filter {
+    display: inline-block;
+    margin: 0 10px;
+    max-width: 100%;
+}
+
+.filter-icon {
+    line-height: 48px !important;
+}
+
+.input-button {
+    width: 48px;
+}
+
+.items-list {
+    padding: 0 10px;
+    margin: 10 0;
+    max-width: 100%;
+    max-height: 150px;
+    list-style: none;
+    overflow-y: scroll;
+}
+
+.list-item {
+    display: inline-block;
+    margin: 2px 0;
+    padding: 0 10px;
+    height: auto;
+    font-size: 1.2em;
+    line-height: 48px;
+    background: #eee;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.list-filter {
+    padding: 10px;
+    display: none;
+}
+
+.menu-icon {
+    display: inline-block;
+    padding: 13px;
+    text-align: center;
+    background: #fff;
+}
+
+.text-search {
+    padding: 0 10px 0 48px;
+    width: 208px;
+    box-sizing: border-box;
+    font-size: 1.2em;
+    border-bottom: none;
+    background: url(../images/pointer-icon-middle.png), #FFF;
     background-repeat: no-repeat;
- }
+    background-position: 8px 8px;
+    border-left: 1px solid #ccc;
+}
 
- input.input::before {
-     content: "jkljklj";
-     display: block;
-     position: absolute;
-     background: url(../images/pointer.png), 5px 2px, no-repeat;
- }
+.wiki-link {
+     padding: 10px 0 10px 42px;
+     margin-bottom: 2px;
+     color: #777;
+     line-height: 32px;
+     background: url('../images/wiki-icon1.png') no-repeat;
+}
 
- .menu-label {
+.wiki-item {
+    margin-bottom: 2px;
+}
+
+.wiki-list {
+     list-style: none;
+     padding: 5px;
+}
+
+.menu-label {
      width: 48px;
      background: url('../images/pointer.png'), no-repeat;
- }
+}
+
+.rotate-right {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    -o-transform: rotate(-90deg);
+}
