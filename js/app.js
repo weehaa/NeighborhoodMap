@@ -1,11 +1,11 @@
 var initLoc = {
     "geometry" : {
         "location" : {
-               "lat" : 55.75393030000001,
-               "lng" : 37.620795000000044
+               "lat" : 45.2405036,
+               "lng" : 9.529251199999976
            }
     },
-    "name" : "Moscow, Red Square"
+    "name" : "London, United Kingdom"
 }
 
 var wiki = {
@@ -130,7 +130,7 @@ var ViewModel = function() {
     // load wikipedia data to the marker wikiLinks
     function wikiSearch(marker) {
         var wikiUrl = wiki.url + encodeURIComponent(marker.name) + '&limit=' + wiki.limit;
-        console.log(wikiUrl);
+        // console.log(wikiUrl);
         var wikiRequestTimeout = setTimeout(function(){
             marker.wikiLinks(wiki.fail);
         }, 8000);
