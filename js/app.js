@@ -26,7 +26,7 @@ var ViewModel = function() {
     // initialize map function
     var map = new google.maps.Map(document.getElementById("map"), {
         center: initLoc.geometry.location,
-        zoom: 15,
+        zoom: 16,
         fullscreenControl: false,
         mapTypeControlOptions: {
             position: google.maps.ControlPosition.LEFT_BOTTOM
