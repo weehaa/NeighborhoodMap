@@ -77,14 +77,9 @@ var ViewModel = function() {
             }
             infoWindowInit(this);
             self.infoWindow.open(map, this);
-            if (this.getAnimation() === null) {
-                this.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(function() {
-                    thisMarker.setAnimation(null); }, 2000);
-                }
-                else {
-                    this.setAnimation(null);
-                    }
+            this.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {
+                thisMarker.setAnimation(null); }, 2100);
             };
         var marker = new google.maps.Marker({
             map: map,
