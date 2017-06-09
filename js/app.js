@@ -38,11 +38,11 @@ var ViewModel = function() {
     var userMenuDiv = document.getElementById("user-menu");
     map.controls[google.maps.ControlPosition.LEFT_TOP].push(userMenuDiv);
 
-    var tog = document.getElementById("tog");
-    tog.addEventListener('click', function() {
-        $(".list-filter").toggle("slow");
-        $("#tog").toggleClass("rotate-right");
-    });
+    self.isOpen = ko.observable(false);
+
+    self.toggleMenu = function() {
+        self.isOpen(!self.isOpen());
+    }
 
 
     // search for places nearby `loc` location

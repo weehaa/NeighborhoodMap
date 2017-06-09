@@ -58,17 +58,18 @@ body {
 }
 
 .items-list {
-    padding: 0 10px;
-    margin: 10 0;
+    padding: 5px;
+    margin: 10px 0;
     max-width: 100%;
-    max-height: 150px;
+    max-height: 174px;
     list-style: none;
     overflow-y: scroll;
+    border: 1px solid #ccc;
 }
 
 .list-item {
     display: inline-block;
-    margin: 2px 0;
+    margin: 5px;
     padding: 0 10px;
     height: auto;
     font-size: 1.2em;
@@ -79,15 +80,23 @@ body {
 }
 
 .list-filter {
-    padding: 10px;
-    display: none;
+    position: relative;
+    padding: 0 10px;
+    height: 0px;
+    transition: height 0.5s;
+}
+
+.show {
+    height: 250px;
+    transition: height 0.5s;
 }
 
 .menu-icon {
     display: inline-block;
-    padding: 13px;
+    padding: 13px 14px;
     text-align: center;
     background: #fff;
+    transition: transform 0.5s;
 }
 
 .text-search {
@@ -125,8 +134,7 @@ body {
 }
 
 .rotate-right {
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-    -o-transform: rotate(-90deg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
 }
