@@ -6,7 +6,7 @@ var initLoc = {
            }
     },
     "name" : "London, United Kingdom"
-}
+};
 
 var wiki = {
     "url" : "http://en.wikipedia.org/w/api.php?action=opensearch&" +
@@ -16,7 +16,7 @@ var wiki = {
     "fail" : "<p>Wikipedia search failed, try again</p>",
     // limit  is a request number of results from wiki API
     "limit" : 2
-}
+};
 
 
 var ViewModel = function() {
@@ -33,7 +33,7 @@ var ViewModel = function() {
         }
       });
 
-    var searchAutoComplete = new google.maps.places.Autocomplete(
+    new google.maps.places.Autocomplete(
                         document.getElementById("place-search"));
     var userMenuDiv = document.getElementById("user-menu");
     map.controls[google.maps.ControlPosition.LEFT_TOP].push(userMenuDiv);
@@ -48,7 +48,7 @@ var ViewModel = function() {
     // search for places nearby `loc` location
     function searchPlaces(loc) {
       // create places service
-      var service = new google.maps.places.PlacesService(map);
+        var service = new google.maps.places.PlacesService(map);
         service.nearbySearch({
           location: loc,
           radius: 500
@@ -56,11 +56,13 @@ var ViewModel = function() {
         },
         // callback function for nearbySearch
         function(results, status) {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (var i = 0; i < results.length; i++) {
-              createMarker(results[i]);
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                  createMarker(results[i]);
+                }
+            } else {
+                window.alert("Google places search failed at that moment, please try again");
             }
-          }
         });
     }
 
@@ -75,7 +77,7 @@ var ViewModel = function() {
             }
             infoWindowInit(this);
             self.infoWindow.open(map, this);
-            if (this.getAnimation() == null) {
+            if (this.getAnimation() === null) {
                 this.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(function() {
                     thisMarker.setAnimation(null); }, 2000);
@@ -83,7 +85,7 @@ var ViewModel = function() {
                 else {
                     this.setAnimation(null);
                     }
-            }
+            };
         var marker = new google.maps.Marker({
             map: map,
             icon: 'images/pointer.png',
@@ -96,7 +98,7 @@ var ViewModel = function() {
         google.maps.event.addListener(marker, "click", markerClick);
         self.markers.push(marker);
         return marker;
-        }
+    }
 
 
     // Sets up lone info window
@@ -152,7 +154,7 @@ var ViewModel = function() {
                     marker.wikiLinks(marker.wikiLinks() + '<li class="wiki-item"><a class="wiki-link" href="' +
                                      articleLinks[i] + '">' +
                                      articleList[i] + '</a></li>');
-                };
+                }
                 marker.wikiLinks(marker.wikiLinks() + '</ul>');
             }
         }).fail(function() {
@@ -175,7 +177,7 @@ var ViewModel = function() {
         // Get the address or place that the user entered.
         var address = self.initLocName();
         // Make sure the address isn't blank.
-        if (address == "") {
+        if (address === "") {
         window.alert("You must enter an area, or address.");
         } else {
         // Geocode the address/area entered to get the center.
@@ -201,7 +203,7 @@ var ViewModel = function() {
             }
           });
         }
-    }
+    };
 
 
     // search query function with  subscribtion to all the events in search input
@@ -218,13 +220,13 @@ var ViewModel = function() {
                     marker.isHidden = true;
                     marker.setMap(null);
                     markersMutated = true;
-                };
+                }
             } else {
                 if (marker.isHidden) {
                     marker.isHidden = false;
                     marker.setMap(map);
                     markersMutated = true;
-                };
+                }
             }
         }
         // force reload markers observableArray if one of the markers has mutated
@@ -235,7 +237,7 @@ var ViewModel = function() {
             data = null;
         }
     });
-}
+};
 
 
 
@@ -243,7 +245,7 @@ var ViewModel = function() {
 function initApp() {
     if (typeof google !== 'undefined') {
         ko.applyBindings(new ViewModel());
-    } else { googleError() };
+    } else { googleError(); }
 }
 
 
