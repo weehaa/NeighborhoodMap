@@ -87,7 +87,6 @@ var ViewModel = function() {
             position: place.geometry.location,
             name: place.name,
             itemClick: markerClick,
-            isHidden: false,
             wikiLinks: ko.observable('')
         });
         google.maps.event.addListener(marker, "click", markerClick);
@@ -128,16 +127,16 @@ var ViewModel = function() {
     function wikiSearch(marker) {
         var wikiUrl = wiki.url + encodeURIComponent(marker.name) + '&limit=' + wiki.limit;
         // console.log(wikiUrl);
-        var wikiRequestTimeout = setTimeout(function(){
-            marker.wikiLinks(wiki.fail);
-        }, 8000);
+        // var wikiRequestTimeout = setTimeout(function(){
+        //     marker.wikiLinks(wiki.fail);
+        // }, 8000);
 
         $.ajax({
             url: wikiUrl,
             dataType: "jsonp",
             jsonp: "callback",
             success: function(response) {
-                clearTimeout(wikiRequestTimeout);
+                // clearTimeout(wikiRequestTimeout);
                 var articleList = response[1];
                 var articleLinks = response[3];
                 if (articleList.length === 0) {
@@ -211,15 +210,13 @@ var ViewModel = function() {
                 /**if the place is NOT relevant to the search, make the marker
                 invisible and hide the marker from the markers list**/
                 // check if marker is already hidden
-                if (!marker.isHidden) {
-                    marker.isHidden = true;
-                    marker.setMap(null);
+                if (marker.visible) {
+                    marker.setVisible(false);
                     markersMutated = true;
                 }
             } else {
-                if (marker.isHidden) {
-                    marker.isHidden = false;
-                    marker.setMap(map);
+                if (!marker.visible) {
+                    marker.setVisible(true);
                     markersMutated = true;
                 }
             }
