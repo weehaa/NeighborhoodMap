@@ -45,12 +45,15 @@ body {
 
 .filter {
     display: inline-block;
-    margin: 0 10px;
+    margin: 10px 10px;
+    width: 250px;
     max-width: 100%;
 }
 
 .filter-icon {
     line-height: 48px !important;
+    margin: 10px 0;
+    color: #666;
 }
 
 .input-button {
@@ -81,6 +84,7 @@ body {
 
 .list-filter {
     position: relative;
+    margin: 15px 0;
     padding: 0 10px;
     height: 0px;
     transition: height 0.5s;
@@ -101,7 +105,7 @@ body {
 
 .text-search {
     padding: 0 10px 0 48px;
-    width: 208px;
+    width: 205px;
     box-sizing: border-box;
     font-size: 1.2em;
     border-bottom: none;
