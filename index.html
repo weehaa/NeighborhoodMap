@@ -9,22 +9,22 @@
     </head>
     <body>
 
-        <div id="user-menu" class="in-1">
+        <nav id="user-menu" class="nav-menu">
             <div class="search-div">
                 <i class="fa fa-2x fa-bars menu-icon" aria-hidden="true" data-bind="click: toggleMenu, css: {'rotate-right': isOpen}"></i><!--
             --><input id="place-search" class="f-input text-search" type="text" data-bind="textInput: initLocName"><!--
             --><i class="fa fa-2x fa-search" aria-hidden="true" data-bind="click: newInitLoc()"></i>
             </div>
-        </div>
-        <div class="list-filter" data-bind="css: {'show': isOpen}">
+        </nav>
+        <aside class="list-filter" data-bind="css: {'show': isOpen}">
             <i class="fa fa-2x fa-filter filter-icon" aria-hidden="true"></i>
             <input  class="f-input filter" placeholder="Filter…" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
             <ul id="itemList" class="items-list" data-bind="foreach: markers">
                 <li class="f-input list-item hidden" data-bind="text: name, click: itemClick, css: {hidden: isHidden}"></li>
             </ul>
-        </div>
+        </aside>
 
-        <div id="map"></div>
+        <main id="map"></main>
 
         <script src="js/libs/jquery.min.js"></script>
         <script type='text/javascript' src='js/libs/knockout-3.4.2.js'></script>
