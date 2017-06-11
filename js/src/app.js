@@ -33,16 +33,14 @@ var ViewModel = function() {
         }
       });
 
-    new google.maps.places.Autocomplete(
-                        document.getElementById("place-search"));
+    new google.maps.places.Autocomplete(document.getElementById("place-search"));
     var userMenuDiv = document.getElementById("user-menu");
     map.controls[google.maps.ControlPosition.LEFT_TOP].push(userMenuDiv);
 
     self.isOpen = ko.observable(false);
-
     self.toggleMenu = function() {
         self.isOpen(!self.isOpen());
-    }
+    };
 
 
     // search for places nearby `loc` location
