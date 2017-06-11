@@ -123,14 +123,10 @@ var ViewModel = function() {
     }
 
 
-    // load wikipedia data to the marker wikiLinks
+    // load wikipedia data related to the marker name and bind it to
+    // to the marker wikiLinks
     function wikiSearch(marker) {
         var wikiUrl = wiki.url + encodeURIComponent(marker.name) + '&limit=' + wiki.limit;
-        // console.log(wikiUrl);
-        // var wikiRequestTimeout = setTimeout(function(){
-        //     marker.wikiLinks(wiki.fail);
-        // }, 8000);
-
         $.ajax({
             url: wikiUrl,
             dataType: "jsonp",
@@ -230,7 +226,6 @@ var ViewModel = function() {
         }
     });
 };
-
 
 
 // Googleapis callback function. Initialize the app if `google` variable is defined.
